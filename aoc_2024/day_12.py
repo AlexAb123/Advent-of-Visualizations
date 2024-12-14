@@ -46,13 +46,20 @@ def visualize_2024_12(stdscr: curses.window):
         perimeter = region_perimeter(region)
         regions.append((region, grid[pos], len(region), perimeter, region_sides(perimeter)))
     
+    content = [["" for _ in range(len(lines[0]))] for _ in range(len(lines))]
     for region in regions:
         for pos in region[0]:
             row, col = complex_to_row_col(pos)
-            window.addstr(row, col, region[1], colors["button_hover_color"])
+            content[row][col] = "#"
+            window.addstr(row, col, "#", colors["button_hover_color"])
         for pos, _ in region[3]:
             row, col = complex_to_row_col(pos)
-            window.addstr(row, col, region[1], colors["button_color"]) 
+            content[row][col] = "."
+            window.addstr(row, col, ".", colors["button_color"]) 
         window.refresh()
-        sleep(0.01)
+
+    html_content = "\n".join("".join(line) for line in content)
+    with open("index.html", "w") as file:
+        file.write(html_content)
     sleep(3)
+
