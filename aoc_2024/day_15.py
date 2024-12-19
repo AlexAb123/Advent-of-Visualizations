@@ -1,5 +1,5 @@
 import pygame
-from utils.colors import RED, GREEN, BLUE, WHITE
+from utils.colors import RED, BLACK, BLUE, WHITE, GOLD
 from utils.helpers import complex_to_pos
 from pathlib import Path
 
@@ -9,6 +9,7 @@ def simulate_move(move, left_boxes, right_boxes, walls, robot_pos):
                 ">": 1j,
                 "v": 1,
                 "<": -1j}
+    
     d = directions[move]
     displacements = [robot_pos]
     hit_wall = False
@@ -51,21 +52,18 @@ def simulate_move(move, left_boxes, right_boxes, walls, robot_pos):
     return left_boxes, right_boxes, robot_pos
 
 def draw_grid(screen: pygame.Surface, robot_pos, left_boxes, right_boxes, walls, grid_size):
-    CELL_SIZE = min(screen.get_width(), screen.get_height())//grid_size
-    CELL_SIZE_TUPLE = (CELL_SIZE, CELL_SIZE)
+    screen.fill(BLACK)
+    CELL_SIZE = max(screen.get_width(), screen.get_height())//grid_size
     CELL_SPACING = 5
-
     x, y = complex_to_pos(robot_pos*CELL_SIZE)[::-1]
     rect = pygame.Rect((x+CELL_SPACING, y+CELL_SPACING), (CELL_SIZE - CELL_SPACING,)*2)
     pygame.draw.rect(screen, RED, rect)
     for box in left_boxes:
-
         x, y = complex_to_pos(box*CELL_SIZE)[::-1]
         rect = pygame.Rect((x+CELL_SPACING, y+CELL_SPACING), (CELL_SIZE - CELL_SPACING,)*2)
         pygame.draw.line(screen, BLUE, (rect.left, rect.top), (rect.right, rect.top), 3)
         pygame.draw.line(screen, BLUE, (rect.left, rect.top), (rect.left, rect.bottom), 3)
         pygame.draw.line(screen, BLUE, (rect.left, rect.bottom), (rect.right, rect.bottom), 3)
-
     for box in right_boxes:
         x, y = complex_to_pos(box*CELL_SIZE)[::-1]
         rect = pygame.Rect((x+CELL_SPACING, y+CELL_SPACING), (CELL_SIZE - CELL_SPACING,)*2)
@@ -76,6 +74,7 @@ def draw_grid(screen: pygame.Surface, robot_pos, left_boxes, right_boxes, walls,
         x, y = complex_to_pos(wall*CELL_SIZE)[::-1]
         rect = pygame.Rect((x+CELL_SPACING, y+CELL_SPACING), (CELL_SIZE - CELL_SPACING,)*2)
         pygame.draw.rect(screen, WHITE, rect)
+    pygame.display.flip()
 
 
 def visualize_2024_15(screen: pygame.Surface):
@@ -103,7 +102,6 @@ def visualize_2024_15(screen: pygame.Surface):
                 walls2.add(r+(c*2+1)*1j)
 
     draw_grid(screen, robot_pos2, left_boxes, right_boxes, walls2, len(grid)*2)
-    pygame.display.flip()
 
 
     running = True
@@ -111,8 +109,6 @@ def visualize_2024_15(screen: pygame.Surface):
         move = wait_for_input()
         left_boxes, right_boxes, robot_pos2 = simulate_move(move, left_boxes.copy(), right_boxes.copy(), walls2, robot_pos2)
         draw_grid(screen, robot_pos2, left_boxes, right_boxes, walls2, len(grid)*2)
-        pygame.display.flip()
-        screen.fill((0,0,0))
 
 def wait_for_input():
     while True:

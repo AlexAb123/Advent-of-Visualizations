@@ -37,7 +37,7 @@ def main():
             elif event.type == pygame.QUIT:
                 running = False
                 
-        pygame.display.update()
+        pygame.display.flip()
 
 
 if __name__ == "__main__":
