@@ -1,2 +1,2 @@
-def complex_to_row_col(num):
+def complex_to_pos(num):
     return (int(num.real), int(num.imag))
